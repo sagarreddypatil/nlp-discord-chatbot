@@ -18,11 +18,7 @@ generation_kwargs = {"num_beams": 3, "min_length": 0, "temperature": 1.5}
 
 print("Loaded Model")
 
-TOKEN = os.getenv("DISCORD_KEY")
-client = discord.Client()
-
-people = []
-conversations = []
+conversations = {}
 
 
 @client.event
@@ -37,19 +33,21 @@ async def on_message(message):
 
     if message.content.lower().startswith("jane "):
         utterance = message.content[5:]
-        author = message.author.name
+        author = str(message.author)
         current_convo = None
 
-        if author in people:
-            current_convo = conversations[people.index(author)]
+        if author in conversations:
+            current_convo = conversations[author]
             current_convo.add_user_input(utterance)
         else:
-            people.append(author)
             current_convo = Conversation(utterance)
-            conversations.append(current_convo)
+            conversations[author] = current_convo
 
         pipeline(current_convo, **generation_kwargs)
         await message.reply(current_convo.generated_responses[-1][1:])
 
 
-client.run(TOKEN)
+if __name__ == "__main__":
+    TOKEN = os.getenv("DISCORD_KEY")
+    client = discord.Client()
+    client.run(TOKEN)
