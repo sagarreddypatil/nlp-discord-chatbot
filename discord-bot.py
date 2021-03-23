@@ -78,7 +78,7 @@ async def on_message(message):
 
         if utterance == "-h" or utterance == "--history":
             output = ""
-            for is_user, text in current_convo.iter_texts()[2:]:
+            for is_user, text in islice(current_convo.iter_texts(), 2, None):
                 name = message.author.display_name if is_user else "Jane"
                 output += "{} >> {} \n".format(name, text)
 
