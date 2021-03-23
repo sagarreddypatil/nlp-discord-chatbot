@@ -43,6 +43,13 @@ def select_or_create_convo(author: str, author_display: str):
     return current_convo
 
 
+def create_embed(author, title: str, description: str):
+    embed = discord.Embed(
+        title=title, description=description, color=discord.Color.blue()
+    )
+    embed.set_author(name=author.display_name, icon_url=author.avatar_url)
+
+
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
@@ -61,15 +68,25 @@ async def on_message(message):
         if utterance == "-r" or "--reset":
             current_convo = init_convo(author, message.author.display_name)
 
-            embed = discord.Embed(
+            embed = create_embed(
+                message.author,
                 title="Reset",
                 description="Your message history with Jane has been reset",
-                color=discord.Color.blue(),
             )
-            embed.set_author(
-                name=message.author.display_name, icon_url=message.author.avatar_url
-            )
+            await message.channel.send(embed=embed)
+            return
 
+        if utterance == "-h" or "--history":
+            output = ""
+            for is_user, text in self.iter_texts():
+                name = message.author.display_name if is_user else "Jane"
+                output += "{} >> {} \n".format(name, text)
+
+            embed = create_embed(
+                message.author,
+                title="Message History",
+                description=output,
+            )
             await message.channel.send(embed=embed)
             return
 
