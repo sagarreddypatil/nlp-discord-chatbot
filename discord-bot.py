@@ -78,9 +78,12 @@ async def on_message(message):
 
         if utterance == "-h" or utterance == "--history":
             output = ""
-            for is_user, text in self.iter_texts():
+            for is_user, text in current_convo.iter_texts()[2:]:
                 name = message.author.display_name if is_user else "Jane"
                 output += "{} >> {} \n".format(name, text)
+
+            if len(output) == 0:
+                output = "No history"
 
             embed = create_embed(
                 message.author,
