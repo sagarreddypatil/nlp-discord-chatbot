@@ -65,7 +65,7 @@ async def on_message(message):
         author = str(message.author)
         current_convo = select_or_create_convo(author, message.author.display_name)
 
-        if utterance == "-r" or "--reset":
+        if utterance == "-r" or utterance == "--reset":
             current_convo = init_convo(author, message.author.display_name)
 
             embed = create_embed(
@@ -76,7 +76,7 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             return
 
-        if utterance == "-h" or "--history":
+        if utterance == "-h" or utterance == "--history":
             output = ""
             for is_user, text in self.iter_texts():
                 name = message.author.display_name if is_user else "Jane"
