@@ -23,10 +23,11 @@ conversations = {}
 client = discord.Client()
 
 
-def init_convo(author_display: str):
+def init_convo(author: str, author_display: str):
     new_convo = Conversation(f"Hello! I am {author_display}")
     new_convo.mark_processed()
     new_convo.append_response("Hello! My name is Jane")
+    conversations[author] = new_convo
 
     return new_convo
 
@@ -37,8 +38,7 @@ def select_or_create_convo(author: str, author_display: str):
     if author in conversations:
         current_convo = conversations[author]
     else:
-        current_convo = init_convo(author_display)
-        conversations[author] = current_convo
+        current_convo = init_convo(author, author_display)
 
     return current_convo
 
@@ -57,6 +57,21 @@ async def on_message(message):
         utterance = message.content[5:]
         author = str(message.author)
         current_convo = select_or_create_convo(author, message.author.display_name)
+
+        if utterance == "-r" or "--reset":
+            current_convo = init_convo(author, message.author.display_name)
+
+            embed = discord.Embed(
+                title="Reset",
+                description="Your message history with Jane has been reset",
+                color=discord.Color.blue(),
+            )
+            embed.set_author(
+                name=message.author.display_name, icon_url=message.author.avatar_url
+            )
+
+            await message.send(embed=embed)
+            return
 
         current_convo.add_user_input(utterance)
         pipeline(current_convo, **generation_kwargs)
