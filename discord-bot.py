@@ -45,7 +45,7 @@ def select_or_create_convo(author: str, author_display: str):
     return current_convo
 
 
-def create_embed(author, title: str, description: str, footer: Union[str, None]):
+def create_embed(author, title: str, description: str, footer=None):
     embed = discord.Embed(
         title=title, description=description, footer=footer, color=discord.Color.blue()
     )
