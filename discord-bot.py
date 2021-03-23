@@ -1,5 +1,5 @@
 import os
-from itertools import islice
+import pickle
 import discord
 from transformers import (
     ConversationalPipeline,
@@ -20,6 +20,9 @@ generation_kwargs = {"num_beams": 3, "min_length": 0, "temperature": 1.5}
 print("Loaded Model")
 
 conversations = {}
+if os.path.exists("conversations.pkl"):
+    with open("conversations.pkl", "rb") as file:
+        conversations = pickle.load(file)
 
 client = discord.Client()
 
@@ -105,4 +108,10 @@ async def on_message(message):
 
 if __name__ == "__main__":
     TOKEN = os.getenv("DISCORD_KEY")
-    client.run(TOKEN)
+    try:
+        client.run(TOKEN)
+    except KeyboardInterrupt:
+        pass
+
+with open("conversations.pkl", "wb") as file:
+    pickle.dump(conversations, file, protocol=pickle.HIGHEST_PROTOCOL)
