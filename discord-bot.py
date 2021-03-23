@@ -48,6 +48,7 @@ def create_embed(author, title: str, description: str):
         title=title, description=description, color=discord.Color.blue()
     )
     embed.set_author(name=author.display_name, icon_url=author.avatar_url)
+    return embed
 
 
 @client.event
@@ -76,22 +77,22 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             return
 
-        # if utterance == "-h" or utterance == "--history":
-        #     output = ""
-        #     for is_user, text in list(current_convo.iter_texts())[2:]:
-        #         name = message.author.display_name if is_user else "Jane"
-        #         output += "{} >> {} \n".format(name, text)
+        if utterance == "-h" or utterance == "--history":
+            output = ""
+            for is_user, text in list(current_convo.iter_texts())[2:]:
+                name = message.author.display_name if is_user else "Jane"
+                output += "{} >> {} \n".format(name, text)
 
-        #     if len(output) == 0:
-        #         output = "No history"
+            if len(output) == 0:
+                output = "No history"
 
-        #     embed = create_embed(
-        #         message.author,
-        #         title="Message History",
-        #         description=output,
-        #     )
-        #     await message.channel.send(embed=embed)
-        #     return
+            embed = create_embed(
+                message.author,
+                title="Message History",
+                description=output,
+            )
+            await message.channel.send(embed=embed)
+            return
 
         current_convo.add_user_input(utterance)
         pipeline(current_convo, **generation_kwargs)
