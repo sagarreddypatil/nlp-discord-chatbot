@@ -67,7 +67,7 @@ async def on_message(message):
 
     if message.content.lower().startswith("jane "):
         utterance = message.content[5:]
-        author = str(message.author)
+        author = f"{message.guild.id}:{message.author}"
         current_convo = select_or_create_convo(author, message.author.display_name)
 
         if utterance == "-r" or utterance == "--reset":
