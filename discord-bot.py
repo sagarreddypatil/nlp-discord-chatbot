@@ -20,6 +20,8 @@ print("Loaded Model")
 
 conversations = {}
 
+client = discord.Client()
+
 
 @client.event
 async def on_ready():
@@ -49,5 +51,4 @@ async def on_message(message):
 
 if __name__ == "__main__":
     TOKEN = os.getenv("DISCORD_KEY")
-    client = discord.Client()
     client.run(TOKEN)
