@@ -1,6 +1,5 @@
 import os
-from itertools import islice
-from typing import Union
+import pickle
 import discord
 from transformers import (
     ConversationalPipeline,
@@ -21,6 +20,9 @@ generation_kwargs = {"num_beams": 3, "min_length": 0, "temperature": 1.5}
 print("Loaded Model")
 
 conversations = {}
+if os.path.exists("conversations.pkl"):
+    with open("conversations.pkl", "rb") as file:
+        conversations = pickle.load(file)
 
 client = discord.Client()
 
@@ -28,7 +30,7 @@ client = discord.Client()
 def init_convo(author: str, author_display: str):
     new_convo = Conversation(f"Hello! I am {author_display}")
     new_convo.mark_processed()
-    new_convo.append_response("Hello! My name is Jane")
+    new_convo.append_response(" Hello! My name is Jane")
     conversations[author] = new_convo
 
     return new_convo
@@ -83,7 +85,7 @@ async def on_message(message):
 
         if utterance == "-h" or utterance == "--history":
             output = ""
-            for is_user, text in islice(current_convo.iter_texts(), 2, None):
+            for is_user, text in list(current_convo.iter_texts())[2:][-14:]:
                 name = message.author.display_name if is_user else "Jane"
                 output += "{} >> {} \n".format(name, text)
 
@@ -106,4 +108,10 @@ async def on_message(message):
 
 if __name__ == "__main__":
     TOKEN = os.getenv("DISCORD_KEY")
-    client.run(TOKEN)
+    try:
+        client.run(TOKEN)
+    except KeyboardInterrupt:
+        pass
+
+with open("conversations.pkl", "wb") as file:
+    pickle.dump(conversations, file, protocol=pickle.HIGHEST_PROTOCOL)
