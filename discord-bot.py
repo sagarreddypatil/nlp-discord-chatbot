@@ -23,15 +23,21 @@ conversations = {}
 client = discord.Client()
 
 
-def select_or_create_convo(author: str):
+def init_convo(author_display: str):
+    new_convo = Conversation(f"Hello! I am {author_display}")
+    new_convo.mark_processed()
+    new_convo.append_response("Hello! My name is Jane")
+
+    return new_convo
+
+
+def select_or_create_convo(author: str, author_display: str):
     current_convo = None
 
     if author in conversations:
         current_convo = conversations[author]
     else:
-        current_convo = Conversation(f"Hello! I am {message.author.display_name}")
-        current_convo.mark_processed()
-        current_convo.append_response(f"Hello! My name is Jane")
+        current_convo = init_convo(author_display)
         conversations[author] = current_convo
 
     return current_convo
@@ -50,9 +56,9 @@ async def on_message(message):
     if message.content.lower().startswith("jane "):
         utterance = message.content[5:]
         author = str(message.author)
-        current_convo = select_or_create_convo(author)
-        current_convo.add_user_input(utterance)
+        current_convo = select_or_create_convo(author, message.author.display_name)
 
+        current_convo.add_user_input(utterance)
         pipeline(current_convo, **generation_kwargs)
         await message.reply(current_convo.generated_responses[-1][1:])
 
