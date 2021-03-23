@@ -49,7 +49,7 @@ async def on_message(message):
             conversations.append(current_convo)
 
         pipeline(current_convo, **generation_kwargs)
-        await message.channel.send(current_convo.generated_responses[-1][1:])
+        await message.reply(current_convo.generated_responses[-1][1:])
 
 
 client.run(TOKEN)
