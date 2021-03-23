@@ -1,5 +1,6 @@
 import os
 from itertools import islice
+from typing import Union
 import discord
 from transformers import (
     ConversationalPipeline,
@@ -44,9 +45,9 @@ def select_or_create_convo(author: str, author_display: str):
     return current_convo
 
 
-def create_embed(author, title: str, description: str):
+def create_embed(author, title: str, description: str, footer: Union[str, None]):
     embed = discord.Embed(
-        title=title, description=description, color=discord.Color.blue()
+        title=title, description=description, footer=footer, color=discord.Color.blue()
     )
     embed.set_author(name=author.display_name, icon_url=author.avatar_url)
     return embed
@@ -91,6 +92,7 @@ async def on_message(message):
                 message.author,
                 title="Message History",
                 description=output,
+                footer="Jane can only remember the last 128 words in the conversation",
             )
             await message.channel.send(embed=embed)
             return
