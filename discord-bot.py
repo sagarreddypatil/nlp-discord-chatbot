@@ -27,7 +27,7 @@ client = discord.Client()
 def init_convo(author: str, author_display: str):
     new_convo = Conversation(f"Hello! I am {author_display}")
     new_convo.mark_processed()
-    new_convo.append_response("Hello! My name is Jane")
+    new_convo.append_response(" Hello! My name is Jane")
     conversations[author] = new_convo
 
     return new_convo
