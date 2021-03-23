@@ -42,9 +42,9 @@ async def on_message(message):
             current_convo = conversations[author]
             current_convo.add_user_input(utterance)
         else:
-            current_convo = Conversation(f"I am {message.author.display_name}")
+            current_convo = Conversation(f"Hello! I am {message.author.display_name}")
             current_convo.mark_processed()
-            current_convo.append_response(f"I am Jane")
+            current_convo.append_response(f"Hello! My name is Jane")
             current_convo.add_user_input(utterance)
             conversations[author] = current_convo
 
