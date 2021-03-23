@@ -35,7 +35,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith("jane "):
+    if message.content.lower.startswith("jane "):
         utterance = message.content[5:]
         author = message.author.name
         current_convo = None
