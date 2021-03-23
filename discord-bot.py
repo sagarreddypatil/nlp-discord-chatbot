@@ -50,6 +50,8 @@ def create_embed(author, title: str, description: str, footer: Union[str, None])
         title=title, description=description, footer=footer, color=discord.Color.blue()
     )
     embed.set_author(name=author.display_name, icon_url=author.avatar_url)
+    if footer:
+        embed.set_footer(footer)
     return embed
 
 
