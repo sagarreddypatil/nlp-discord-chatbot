@@ -1,6 +1,5 @@
 import os
 from itertools import islice
-from typing import Union
 import discord
 from transformers import (
     ConversationalPipeline,
