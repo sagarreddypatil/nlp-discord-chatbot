@@ -75,7 +75,9 @@ def generate_history(author_display, current_convo):  # pretty prints the conver
 
 
 def truncate_convo_to_token_limit(convo):
-    while tokenizer._build_conversation_input_ids(convo) > tokenizer.model_max_length:
+    while (
+        len(tokenizer._build_conversation_input_ids(convo)) > tokenizer.model_max_length
+    ):
         if len(convo.past_user_inputs) > 0 and len(convo.generated_responses) > 0:
             convo.past_user_inputs.pop(0)
             convo.generated_responses.pop(0)
