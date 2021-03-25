@@ -74,9 +74,24 @@ def generate_history(author_display, current_convo):  # pretty prints the conver
     return output
 
 
+def _build_conversation_input_ids_modified(
+    conversation: "Conversation",
+):  # <- partially copied from BlenderbotTokenizer._build_conversation_input_ids
+    inputs = []
+    for is_user, text in conversation.iter_texts():
+        if is_user:
+            inputs.append(" " + text)
+        else:
+            inputs.append(text)
+
+    full_string = "  ".join(inputs)
+    input_ids = tokenizer.encode(full_string)
+    return input_ids
+
+
 def truncate_convo_to_token_limit(convo):
     while (
-        len(tokenizer._build_conversation_input_ids(convo)) > tokenizer.model_max_length
+        len(_build_conversation_input_ids_modified(convo)) > tokenizer.model_max_length
     ):
         if len(convo.past_user_inputs) > 0 and len(convo.generated_responses) > 0:
             convo.past_user_inputs.pop(0)
