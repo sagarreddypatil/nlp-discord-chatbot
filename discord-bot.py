@@ -74,32 +74,11 @@ def generate_history(author_display, current_convo):  # pretty prints the conver
     return output
 
 
-def truncate_convo_to_token_limit(
-    convo,
-):  # Only call after user response and before pipeline processing
-    truncated_input = tokenizer.decode(
-        tokenizer._build_conversation_input_ids(convo)
-    ).split(
-        "   "
-    )  # The three spaces comes from how the tokenizer processes conversations before model input(see BlenderbotTokenizer._build_conversation_input_ids)
-    if truncated_input[0] in list(convo.iter_texts()):
-        return  # Truncation not required
-    if len(truncated_input) == 1:  # Extremely large user input
-        convo.past_user_inputs = []
-        convo.generated_responses = []
-        convo.new_user_input = truncated_input[0].strip(" " + string.punctuation)
-        return
-    first_valid_idx = 0
-    if truncated_input[1] in convo.past_user_inputs:  # second element is a user input
-        first_valid_idx = convo.past_user_inputs.index(truncated_input[1])
-    elif (
-        truncated_input[1] in convo.generated_responses
-    ):  # second element is a response
-        first_valid_idx = convo.generated_responses.index(truncated_input[1]) + 1
-
-    convo.past_user_inputs = convo.past_user_inputs[first_valid_idx:]
-    convo.generated_responses = convo.generated_responses[first_valid_idx:]
-    return
+def truncate_convo_to_token_limit(convo):
+    while tokenizer._build_conversation_input_ids(convo) > tokenizer.model_max_length:
+        if len(convo.past_user_inputs) > 0 and len(convo.generated_responses) > 0:
+            convo.past_user_inputs.pop(0)
+            convo.generated_responses.pop(0)
 
 
 @client.event
@@ -173,6 +152,7 @@ async def on_message(message):
             return
 
         current_convo.add_user_input(utterance)
+        truncate_convo_to_token_limit(current_convo)
         pipeline(current_convo, **generation_kwargs)
         await message.reply(current_convo.generated_responses[-1][1:])
 
