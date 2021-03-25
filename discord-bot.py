@@ -56,12 +56,14 @@ def create_embed(author, title: str, description: str, footer=None):
         embed.set_footer(text=footer)
     return embed
 
-def generate_history(author_display, current_convo)
+
+def generate_history(author_display, current_convo):
     output = ""
     for is_user, text in list(current_convo.iter_texts())[2:][-14:]:
         name = author_display if is_user else "Jane"
         output += "{} >> {} \n".format(name, text)
     return output
+
 
 @client.event
 async def on_ready():
@@ -112,23 +114,26 @@ async def on_message(message):
                 embed = create_embed(
                     message.author,
                     title="Amended Message History",
-                    description="No history to amend"
+                    description="No history to amend",
                 )
                 await message.channel.send(embed=embed)
                 return
-            
-            if utterance.startswith("-a"): utterance = utterance[3:]
-            else: utterance = utterance[8:]
+
+            if utterance.startswith("-a"):
+                utterance = utterance[3:]
+            else:
+                utterance = utterance[8:]
 
             current_convo.generated_responses[-1] = utterance
             embed = create_embed(
                 message.author,
                 title="Amended Message History",
-                description=generate_history(message.author.display_name, current_convo)
+                description=generate_history(
+                    message.author.display_name, current_convo
+                ),
             )
             await message.channel.send(embed=embed)
             return
-
 
         current_convo.add_user_input(utterance)
         pipeline(current_convo, **generation_kwargs)
