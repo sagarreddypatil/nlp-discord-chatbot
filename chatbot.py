@@ -6,15 +6,6 @@ from transformers import (
 )
 
 
-def truncate_convo_to_token_limit(convo):
-    while (
-        len(_build_conversation_input_ids_modified(convo)) > tokenizer.model_max_length
-    ):
-        if len(convo.past_user_inputs) > 0 and len(convo.generated_responses) > 0:
-            convo.past_user_inputs.pop(0)
-            convo.generated_responses.pop(0)
-
-
 if __name__ == "__main__":
     import logging
 
