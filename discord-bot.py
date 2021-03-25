@@ -56,6 +56,12 @@ def create_embed(author, title: str, description: str, footer=None):
         embed.set_footer(text=footer)
     return embed
 
+def generate_history(author_display, current_convo)
+    output = ""
+    for is_user, text in list(current_convo.iter_texts())[2:][-14:]:
+        name = author_display if is_user else "Jane"
+        output += "{} >> {} \n".format(name, text)
+    return output
 
 @client.event
 async def on_ready():
@@ -67,8 +73,10 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.lower().startswith("jane "):
-        utterance = message.content[5:]
+    if message.content.lower().startswith(
+        "jane "
+    ) or message.content.lower().startswith("jane,"):
+        utterance = message.content[5:].strip()
         author = f"{message.guild.id}:{message.author}"
         current_convo = select_or_create_convo(author, message.author.display_name)
 
@@ -84,10 +92,7 @@ async def on_message(message):
             return
 
         if utterance == "-h" or utterance == "--history":
-            output = ""
-            for is_user, text in list(current_convo.iter_texts())[2:][-14:]:
-                name = message.author.display_name if is_user else "Jane"
-                output += "{} >> {} \n".format(name, text)
+            output = generate_history(message.author.display_name, current_convo)
 
             if len(output) == 0:
                 output = "No history"
@@ -100,6 +105,30 @@ async def on_message(message):
             )
             await message.channel.send(embed=embed)
             return
+
+        if utterance.startswith("-a") or utterance.startswith("--amend"):
+            history = generate_history(message.author.display_name, current_convo)
+            if len(history) == 0:
+                embed = create_embed(
+                    message.author,
+                    title="Amended Message History",
+                    description="No history to amend"
+                )
+                await message.channel.send(embed=embed)
+                return
+            
+            if utterance.startswith("-a"): utterance = utterance[3:]
+            else: utterance = utterance[8:]
+
+            current_convo.generated_responses[-1] = utterance
+            embed = create_embed(
+                message.author,
+                title="Amended Message History",
+                description=generate_history(message.author.display_name, current_convo)
+            )
+            await message.channel.send(embed=embed)
+            return
+
 
         current_convo.add_user_input(utterance)
         pipeline(current_convo, **generation_kwargs)
