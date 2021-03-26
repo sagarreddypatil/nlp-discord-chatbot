@@ -9,7 +9,7 @@ from transformers import (
     BlenderbotTokenizer,
 )
 
-bot_name = "Lieu"
+bot_name = "Kareena"
 
 model = BlenderbotForConditionalGeneration.from_pretrained(
     "facebook/blenderbot-400M-distill"
