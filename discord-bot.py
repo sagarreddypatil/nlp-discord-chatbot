@@ -9,6 +9,8 @@ from transformers import (
     BlenderbotTokenizer,
 )
 
+bot_name = "Lieu"
+
 model = BlenderbotForConditionalGeneration.from_pretrained(
     "facebook/blenderbot-400M-distill"
 )
@@ -35,7 +37,7 @@ def init_convo(
 ):  # helper function to initialize all new conversations
     new_convo = Conversation(f"Hello! I am {author_display}")
     new_convo.mark_processed()
-    new_convo.append_response(" Hello! My name is Jane")
+    new_convo.append_response(f" Hello! My name is {bot_name}")
     conversations[author] = new_convo
 
     return new_convo
@@ -69,7 +71,7 @@ def create_embed(
 def generate_history(author_display, current_convo):  # pretty prints the conversation
     output = ""
     for is_user, text in list(current_convo.iter_texts()):
-        name = author_display if is_user else "Jane"
+        name = author_display if is_user else bot_name
         output += "{} >> {}\n".format(name, text)
     return output
 
@@ -109,8 +111,8 @@ async def on_message(message):
         return
 
     if message.content.lower().startswith(
-        "jane "
-    ) or message.content.lower().startswith("jane,"):
+        f"{bot_name.lower()} "
+    ) or message.content.lower().startswith(f"{bot_name.lower()},"):
         utterance = message.content[5:].strip()
         author = f"{message.guild.id}:{message.author}"
         current_convo = select_or_create_convo(author, message.author.display_name)
@@ -121,7 +123,7 @@ async def on_message(message):
             embed = create_embed(
                 message.author,
                 title="Reset",
-                description="Your message history with Jane has been reset",
+                description=f"Your message history with {bot_name} has been reset",
             )
             await message.channel.send(embed=embed)
             return
@@ -136,7 +138,7 @@ async def on_message(message):
                 message.author,
                 title="Message History",
                 description=output,
-                footer="Jane can only remember the last 128 syllables in the conversation",
+                footer=f"{bot_name} can only remember the last 128 syllables in the conversation",
             )
             await message.channel.send(embed=embed)
             return
