@@ -10,6 +10,7 @@ from transformers import (
 )
 
 bot_name = "Rajeev"
+bot_gender = "man"
 
 model = BlenderbotForConditionalGeneration.from_pretrained(
     "facebook/blenderbot-400M-distill"
@@ -35,9 +36,9 @@ client = discord.Client()
 def init_convo(
     author: str, author_display: str
 ):  # helper function to initialize all new conversations
-    new_convo = Conversation(f"Hello! I am {author_display}")
+    new_convo = Conversation(f"Hello! My name is {author_display}")
     new_convo.mark_processed()
-    new_convo.append_response(f" Hello! My name is {bot_name}")
+    new_convo.append_response(f" Hello! I am a {bot_gender} named {bot_name}")
     conversations[author] = new_convo
 
     return new_convo
