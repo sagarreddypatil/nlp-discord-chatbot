@@ -113,7 +113,7 @@ async def on_message(message):
     if message.content.lower().startswith(
         f"{bot_name.lower()} "
     ) or message.content.lower().startswith(f"{bot_name.lower()},"):
-        utterance = message.content[5:].strip()
+        utterance = message.content[len(bot_name) + 1 :].strip()
         author = f"{message.guild.id}:{message.author}"
         current_convo = select_or_create_convo(author, message.author.display_name)
 
