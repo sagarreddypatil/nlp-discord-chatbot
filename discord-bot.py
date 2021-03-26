@@ -68,7 +68,7 @@ def create_embed(
 
 def generate_history(author_display, current_convo):  # pretty prints the conversation
     output = ""
-    for is_user, text in list(current_convo.iter_texts())[2:][-14:]:
+    for is_user, text in list(current_convo.iter_texts()):
         name = author_display if is_user else "Jane"
         output += "{} >> {}\n".format(name, text)
     return output
