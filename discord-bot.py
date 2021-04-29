@@ -9,8 +9,8 @@ from transformers import (
     BlenderbotTokenizer,
 )
 
-bot_name = "Rajeev"
-bot_gender = "man"
+bot_name = "Jane"
+bot_gender = "woman"
 
 model = BlenderbotForConditionalGeneration.from_pretrained(
     "facebook/blenderbot-400M-distill"
