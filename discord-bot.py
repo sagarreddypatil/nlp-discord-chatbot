@@ -19,7 +19,7 @@ tokenizer = BlenderbotTokenizer.from_pretrained("facebook/blenderbot-400M-distil
 pipeline = ConversationalPipeline(
     model=model, tokenizer=tokenizer, min_length_for_response=0, framework="pt"
 )
-generation_kwargs = {"num_beams": 3, "min_length": 0, "temperature": 1.5}
+generation_kwargs = {"num_beams": 3, "min_length": 0, "temperature": 5}
 
 print("Loaded Model")
 
@@ -179,6 +179,8 @@ async def on_message(message):
 
 if __name__ == "__main__":
     TOKEN = os.getenv("DISCORD_KEY")
+    bot_name = os.getenv("NAME") if os.getenv("NAME") else bot_name
+    bot_gender = os.getenv("GENDER") if os.getenv("GENDER") else bot_gender
     try:
         client.run(TOKEN)
     except KeyboardInterrupt:
