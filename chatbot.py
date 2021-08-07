@@ -26,8 +26,9 @@ if __name__ == "__main__":
         try:
             convo(dialogue, num_beams=3, min_length=0, temperature=1.5)
             print(dialogue.generated_responses[-1][1:])
-            dialogue.add_user_input(input(">>> "))
-            truncate_convo_to_token_limit(dialogue)
+            ipt = input(">>> ")
+            print(convo.tokenizer.decode(convo.tokenizer.encode(ipt)))
+            dialogue.add_user_input(ipt)
         except KeyboardInterrupt:
             break
 

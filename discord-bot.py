@@ -19,7 +19,12 @@ tokenizer = BlenderbotTokenizer.from_pretrained("facebook/blenderbot-400M-distil
 pipeline = ConversationalPipeline(
     model=model, tokenizer=tokenizer, min_length_for_response=0, framework="pt"
 )
-generation_kwargs = {"num_beams": 3, "min_length": 0, "temperature": 25}
+generation_kwargs = {
+    "num_beams": 3,
+    "min_length": 0,
+    "temperature": 1.5,
+    "top_p": 0.9,
+}
 
 print("Loaded Model")
 
