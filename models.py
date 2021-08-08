@@ -10,8 +10,6 @@ import torch
 
 class Blenderbot:
     def __init__(self):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
         model = BlenderbotForConditionalGeneration.from_pretrained(
             "facebook/blenderbot-400M-distill"
         )
@@ -19,7 +17,11 @@ class Blenderbot:
             "facebook/blenderbot-400M-distill"
         )
         self.pipeline = ConversationalPipeline(
-            model=model, tokenizer=tokenizer, min_length_for_response=0, framework="pt"
+            model=model,
+            tokenizer=tokenizer,
+            min_length_for_response=0,
+            framework="pt",
+            device=0 if torch.cuda.is_available() else -1,
         )
 
         self.generation_kwargs = {
