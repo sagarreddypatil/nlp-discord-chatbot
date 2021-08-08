@@ -1,4 +1,4 @@
-from models import Blenderbot
+from models import Blenderbot, DialoGPT
 import os
 import pickle
 import discord
@@ -9,7 +9,7 @@ from transformers import (
 bot_name = "Jane"
 bot_gender = "woman"
 
-model = Blenderbot()
+model = DialoGPT()
 
 print("Loaded Model")
 
@@ -139,7 +139,10 @@ async def on_message(message):
 
         current_convo.add_user_input(utterance)
         model(current_convo)
-        await message.reply(current_convo.generated_responses[-1][1:])
+
+        response = current_convo.generated_responses[-1].strip()
+
+        await message.reply(response if response != "" else "*`No response`*")
 
 
 if __name__ == "__main__":

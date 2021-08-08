@@ -6,7 +6,6 @@ import torch
 
 tokenizer = GPT2TokenizerFast.from_pretrained("microsoft/DialoGPT-medium")
 model = GPT2LMHeadModel.from_pretrained("microsoft/DialoGPT-medium")
-print(type(model))
 
 # Let's chat for 5 lines
 for step in range(5):
@@ -27,7 +26,7 @@ for step in range(5):
         bot_input_ids,
         do_sample=True,
         max_length=1000,
-        num_beams=3,
+        num_beams=1,
         temperature=1,
         top_k=50,
         top_p=0.95,
