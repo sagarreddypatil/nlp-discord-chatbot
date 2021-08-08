@@ -1,30 +1,15 @@
+from models import Blenderbot
 import os
 import pickle
 import discord
-import string
 from transformers import (
-    ConversationalPipeline,
     Conversation,
-    BlenderbotForConditionalGeneration,
-    BlenderbotTokenizer,
 )
 
 bot_name = "Jane"
 bot_gender = "woman"
 
-model = BlenderbotForConditionalGeneration.from_pretrained(
-    "facebook/blenderbot-400M-distill"
-)
-tokenizer = BlenderbotTokenizer.from_pretrained("facebook/blenderbot-400M-distill")
-pipeline = ConversationalPipeline(
-    model=model, tokenizer=tokenizer, min_length_for_response=0, framework="pt"
-)
-generation_kwargs = {
-    "num_beams": 3,
-    "min_length": 0,
-    "temperature": 1.5,
-    "top_p": 0.9,
-}
+model = Blenderbot()
 
 print("Loaded Model")
 
@@ -82,30 +67,6 @@ def generate_history(author_display, current_convo):  # pretty prints the conver
     return output
 
 
-def _build_conversation_input_ids_modified(
-    conversation: "Conversation",
-):  # <- partially copied from BlenderbotTokenizer._build_conversation_input_ids
-    inputs = []
-    for is_user, text in conversation.iter_texts():
-        if is_user:
-            inputs.append(" " + text)
-        else:
-            inputs.append(text)
-
-    full_string = "  ".join(inputs)
-    input_ids = tokenizer.encode(full_string)
-    return input_ids
-
-
-def truncate_convo_to_token_limit(convo):
-    while (
-        len(_build_conversation_input_ids_modified(convo)) > tokenizer.model_max_length
-    ):
-        if len(convo.past_user_inputs) > 0 and len(convo.generated_responses) > 0:
-            convo.past_user_inputs.pop(0)
-            convo.generated_responses.pop(0)
-
-
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
@@ -144,7 +105,7 @@ async def on_message(message):
                 message.author,
                 title="Message History",
                 description=output,
-                footer=f"{bot_name} can only remember the last 128 syllables in the conversation",
+                footer=f"{bot_name} can only remember the last {model.pipeline.tokenizer.model_max_length} syllables in the conversation",
             )
             await message.channel.send(embed=embed)
             return
@@ -177,8 +138,7 @@ async def on_message(message):
             return
 
         current_convo.add_user_input(utterance)
-        truncate_convo_to_token_limit(current_convo)
-        pipeline(current_convo, **generation_kwargs)
+        model(current_convo)
         await message.reply(current_convo.generated_responses[-1][1:])
 
 
