@@ -77,7 +77,11 @@ class Blenderbot(ModelInterface):
 
 class DialoGPT(ModelInterface):
     def __init__(self):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         self.model = GPT2LMHeadModel.from_pretrained("microsoft/DialoGPT-medium")
+        self.model.to(self.device)
+
         self.tokenizer = GPT2TokenizerFast.from_pretrained("microsoft/DialoGPT-medium")
 
         self.generation_kwargs = {
@@ -98,7 +102,7 @@ class DialoGPT(ModelInterface):
         for _, text in conversation.iter_texts():
             model_input += text + self.tokenizer.eos_token
 
-        return torch.tensor([self.tokenizer.encode(model_input)])
+        return torch.tensor([self.tokenizer.encode(model_input)], device=self.device)
 
     def _truncate_convo_to_token_limit(self, conversation: Conversation):
         while (
