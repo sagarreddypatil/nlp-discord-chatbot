@@ -85,11 +85,12 @@ class DialoGPT(ModelInterface):
         self.tokenizer = GPT2TokenizerFast.from_pretrained("microsoft/DialoGPT-large")
 
         self.generation_kwargs = {
-            "num_beams": 1,
-            "temperature": 2.0,
-            "repetition_penalty": 1.2,
-            "top_k": 50,
-            "top_p": 0.95,
+            # "num_beams": 1,
+            # "temperature": 1.5,
+            # "repetition_penalty": 1.2,
+            # "length_penalty": 1.2,
+            # "top_k": 25,
+            # "top_p": 0.95,
         }
 
         class MockPipeline:
@@ -121,11 +122,10 @@ class DialoGPT(ModelInterface):
         self._truncate_convo_to_token_limit(conversation)
 
         model_input = self._conv_to_model_input(conversation)
-        print(self.tokenizer.decode(model_input[0]))
         model_output = self.model.generate(
             model_input,
             do_sample=True,
-            max_length=1000,
+            max_length=1024,
             pad_token_id=self.tokenizer.eos_token_id,
             **self.generation_kwargs
         )
