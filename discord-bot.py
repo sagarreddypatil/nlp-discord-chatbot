@@ -146,8 +146,9 @@ async def on_message(message):
         if response != "":
             await message.reply(response)
         else:
-            embed = create_embed(title="No Response", description="")
-            await message.reply(embed=embed)
+            # embed = create_embed(author=None, title="No Response", description="")
+            # await message.reply(embed=embed)
+            await message.reply("*`No response`*")
 
 
 if __name__ == "__main__":
