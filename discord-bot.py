@@ -53,7 +53,8 @@ def create_embed(
     embed = discord.Embed(
         title=title, description=description, footer=footer, color=discord.Color.blue()
     )
-    embed.set_author(name=author.display_name, icon_url=author.avatar_url)
+    if author:
+        embed.set_author(name=author.display_name, icon_url=author.avatar_url)
     if footer:
         embed.set_footer(text=footer)
     return embed
@@ -142,7 +143,11 @@ async def on_message(message):
 
         response = current_convo.generated_responses[-1].strip()
 
-        await message.reply(response if response != "" else "*`No response`*")
+        if response != "":
+            await message.reply(response)
+        else:
+            embed = create_embed(title="No Response", description="")
+            await message.reply(embed=embed)
 
 
 if __name__ == "__main__":
