@@ -1,11 +1,12 @@
 # This entire file is from https://huggingface.co/microsoft/DialoGPT-medium
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 import torch
 
 
-tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
-model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+tokenizer = GPT2TokenizerFast.from_pretrained("microsoft/DialoGPT-medium")
+model = GPT2LMHeadModel.from_pretrained("microsoft/DialoGPT-medium")
+print(type(model))
 
 # Let's chat for 5 lines
 for step in range(5):
@@ -23,7 +24,14 @@ for step in range(5):
 
     # generated a response while limiting the total chat history to 1000 tokens,
     chat_history_ids = model.generate(
-        bot_input_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id
+        bot_input_ids,
+        do_sample=True,
+        max_length=1000,
+        num_beams=3,
+        temperature=1,
+        top_k=50,
+        top_p=0.95,
+        pad_token_id=tokenizer.eos_token_id,
     )
 
     # pretty print last ouput tokens from bot
