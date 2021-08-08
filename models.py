@@ -79,14 +79,15 @@ class DialoGPT(ModelInterface):
     def __init__(self):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        self.model = GPT2LMHeadModel.from_pretrained("microsoft/DialoGPT-medium")
+        self.model = GPT2LMHeadModel.from_pretrained("microsoft/DialoGPT-large")
         self.model.to(self.device)
 
-        self.tokenizer = GPT2TokenizerFast.from_pretrained("microsoft/DialoGPT-medium")
+        self.tokenizer = GPT2TokenizerFast.from_pretrained("microsoft/DialoGPT-large")
 
         self.generation_kwargs = {
             "num_beams": 1,
-            "temperature": 1,
+            "temperature": 2.0,
+            "repetition_penalty": 1.2,
             "top_k": 50,
             "top_p": 0.95,
         }
@@ -120,6 +121,7 @@ class DialoGPT(ModelInterface):
         self._truncate_convo_to_token_limit(conversation)
 
         model_input = self._conv_to_model_input(conversation)
+        print(self.tokenizer.decode(model_input[0]))
         model_output = self.model.generate(
             model_input,
             do_sample=True,
