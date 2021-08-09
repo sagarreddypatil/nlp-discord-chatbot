@@ -138,10 +138,11 @@ async def on_message(message):
             await message.channel.send(embed=embed)
             return
 
-        current_convo.add_user_input(utterance)
-        model(current_convo)
+        async with message.channel.typing():
+            current_convo.add_user_input(utterance)
+            model(current_convo)
 
-        response = current_convo.generated_responses[-1].strip()
+            response = current_convo.generated_responses[-1].strip()
 
         if response != "":
             await message.reply(response)
