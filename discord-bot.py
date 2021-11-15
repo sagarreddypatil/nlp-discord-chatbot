@@ -6,8 +6,8 @@ from transformers import (
     Conversation,
 )
 
-bot_name = "Jane"
-bot_gender = "woman"
+bot_name = "AMOGUS"
+bot_gender = "AMOGUS"
 
 model = DialoGPT()
 
