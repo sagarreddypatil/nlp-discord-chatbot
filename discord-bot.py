@@ -1,3 +1,6 @@
+import os
+
+os.environ["TRANSFORMERS_CACHE"] = "cache/"
 from models import Blenderbot, DialoGPT
 import os
 import pickle
