@@ -12,7 +12,7 @@ from transformers import (
 bot_name = "AMOGUS"
 bot_gender = "AMOGUS"
 
-model = DialoGPT()
+model = Blenderbot()
 
 print("Loaded Model")
 
