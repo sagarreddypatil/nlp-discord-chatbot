@@ -1,3 +1,6 @@
+import os
+os.environ["TRANSFORMERS_CACHE"] = "cache/"
+
 # This entire file is from https://huggingface.co/microsoft/DialoGPT-medium
 
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast
